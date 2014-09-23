@@ -71,7 +71,7 @@ for i=1:ntrain
     if op.show>1
         ft          = Bio_statusbar(i/N,ft);
     end
-    I           = asr_imgload(f,itrain(i));
+    I           = asr_imgload(f,itrain(i),options.bsif);
     if op.triggs == 1
         I = tantriggs(I);
     end
@@ -87,7 +87,7 @@ for i=1:length(itest)
     if op.show>1
         ft          = Bio_statusbar((i+ntrain)/N,ft);
     end
-    I           = asr_imgload(f,itest(i));
+    I           = asr_imgload(f,itest(i),options.bsif);
     if op.triggs == 1
         I = tantriggs(I);
     end

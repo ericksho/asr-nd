@@ -25,8 +25,7 @@ if isfield(f,'window')
     end
 end
 
-
-if q>0 % pre-processing
+if isnumeric(q) && q>0 % pre-processing
     [N,M] = size(I);
     switch q
         case 1 % Mery's equalization
@@ -39,5 +38,12 @@ if q>0 % pre-processing
         case 4 % Sharpen filter
             L  = [0 1 0; 1 -4 1; 0 1 0];
             I  = I-0.15*(conv2(I,L,'same'));
+    end
+else
+    % BSIF transformation
+    if(q.use)
+        I = asr_bsif(I,q.n, q.b);
+        figure(10)
+        imshow(I,[]);
     end
 end

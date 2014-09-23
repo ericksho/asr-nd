@@ -11,7 +11,7 @@ function opdef = asr_defoptions()
 opdef.dbase        = {'orl','yale','cas','rr','ar','ar+','lfwf','multiPIE','bxgrid_01','bxgrid_02','bxgrid_03'};
 opdef.pbase        = {'asr_main','int_main','src_main','tpt_main','lbp_main'};
 opdef.nd           = length(opdef.dbase);
-opdef.local_data  = '/Users/Erick/Documents/datasets';
+opdef.local_data  = '/Users/esvecpar/Documents/datasets';
 % the directories are to be located as 
 % .....images/faces/faces_rr
 % .....images/faces/faces_ar
