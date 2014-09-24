@@ -43,7 +43,7 @@ else
     % BSIF transformation
     if(q.use)
         I = asr_bsif(I,q.n, q.b);
-        figure(10)
-        imshow(I,[]);
+        %figure(10)
+        %imshow(I,[]);
     end
 end

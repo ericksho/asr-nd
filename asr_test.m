@@ -1,19 +1,40 @@
 options.NV=350;
-bsif.n = 3;
-bsif.b = 8;
+bsif.n = 11;
+bsif.b = 10;
 bsif.use = true;
 options.bsif = bsif;
 
-TT = [];
+T = [];
 count = 1;
-for n = 3:17
-    for b = 5:12
-        try
-            T = asr_experiments(1,1,2,options);
-            TT(count) = T;
-            count = count + 1;
-        catch
-            %bla
+
+for k = 1:2
+    for i = 1:3
+        for j = 1:3
+            for l = 1:3
+                %%%%%%%%%
+                options.show         = 0;       % display results: 0 Nathing, 1 Messages, 2 Bars, 3 Images
+                options.Q            = 32;      % number of parent clusters
+                options.R            = 20;      % number of child clusters
+
+                options.stoplist     = 1;       % 1/0 includes / does not include stop list
+                options.w            = 16*k;      % pacth size (w*w) pixels
+
+                options.scqth        = 0.1*i;     % threshold for selected patches by testing   ****
+                options.top_bound    = 0.05*j;    % 5%   top    : most frequent word to be stopped
+                options.bottom_bound = 0.1;     % 10%  bottom : less frequent word to be stopped
+                options.NV           = 200;     % number of visual words of visual vocabulary
+
+                options.stopth       = 0.9*l/l;     % words that are very different from dictionary are eliminates ***
+
+
+                %%%%%%%%%
+
+                p = asr_experiments(1,1,2,options);
+                disp([p i j k l]);
+                
+                T(count,:) = [p i j k l]; %1 3 1 3 
+                count = count +1;
+            end
         end
     end
 end
