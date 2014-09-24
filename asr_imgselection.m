@@ -59,7 +59,7 @@ end
 % II = [];
 sh = 10000;
 
-I    = asr_imgload(f,1,options.bsif);
+I    = asr_imgload(f,1,options);
 [nI,mI] = size(I);
 II = zeros(nI*k,mI*n,'uint8');
 
@@ -91,7 +91,7 @@ while and(i<k,j<N)
             end
             if okk
                 f.tf = xj(a);
-                I    = asr_imgload(f,1,options.bsif);
+                I    = asr_imgload(f,1,options);
                 if smin>0
                     if SHA(indiv,xj(a)) == 0;
                         sh = asr_sharpness(I,z,z);

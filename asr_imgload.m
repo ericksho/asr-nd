@@ -1,9 +1,17 @@
-function I = asr_imgload(f,i,q)
-if ~exist('q','var')
+function I = asr_imgload(f,i,options)
+
+if isfield('q','options')
+    q = options.q;
+else
     q = 0;
 end
+
+bsif = options.bsif;
+
 sf  = [f.path f.prefix num2fixstr(f.ti(i),3) '_' num2fixstr(f.tf(i),f.digits) '.' f.extension ];
+
 I   = double(imread(sf));
+
 if isfield(f,'resize')
     I = imresize(I,f.resize);
     I = I - min2(I);   % to ensure positive grayvalues
@@ -25,7 +33,7 @@ if isfield(f,'window')
     end
 end
 
-if isnumeric(q) && q>0 % pre-processing
+if q>0 % pre-processing
     [N,M] = size(I);
     switch q
         case 1 % Mery's equalization
@@ -39,11 +47,10 @@ if isnumeric(q) && q>0 % pre-processing
             L  = [0 1 0; 1 -4 1; 0 1 0];
             I  = I-0.15*(conv2(I,L,'same'));
     end
-else
-    % BSIF transformation
-    if(q.use)
-        I = asr_bsif(I,q.n, q.b);
-        %figure(10)
-        %imshow(I,[]);
-    end
+end
+
+if bsif.use == true
+    I = asr_bsif(I,bsif.n, bsif.b);
+    %figure(10)
+    %imshow(I,[]);
 end

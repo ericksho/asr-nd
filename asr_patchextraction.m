@@ -34,7 +34,7 @@ saliency = asr_defvalue(options,'saliency',0);     % saliency
 border0  = border;
 
 N = length(ix);
-I = asr_imgload(f,1,options.bsif);
+I = asr_imgload(f,1,options);
 [h,w] = size(I);
 
 U = asr_LUTpatches(h,w,a,b);
@@ -49,7 +49,7 @@ z = zeros(N*m,options.ez);
 x = zeros(N*m,2);
 for i=1:N
     ip = indices(i,m);
-    I0 = asr_imgload(f,ix(i),options.bsif);
+    I0 = asr_imgload(f,ix(i),options);
     I  = I0;
     
     if dblur>0

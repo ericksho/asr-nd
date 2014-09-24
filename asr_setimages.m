@@ -176,7 +176,7 @@ switch ix
 end
 f.ti = 1;
 f.tf = 1;
-I         = asr_imgload(f,1,options.bsif);
+I         = asr_imgload(f,1,options);
 [f.h,f.w] = size(I); % dimension of the images height x width
 
 sf = ['data_' ix0 '.mat'];

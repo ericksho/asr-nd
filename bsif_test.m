@@ -45,14 +45,15 @@ b(5).name = 'knn';   b(5).options.k = 9;                              % KNN with
 op.strat=1; op.b = b; op.v = 10; op.show = 1; op.c = 0.95;        	  % 10 groups cross-validation
 [p,ci] = Bev_crossval(Y,dall,op);                                        % cross valitadion
 
-%% using LBP
+%% using LBP %%%%%%%%%%%%%%%%%%%%%%%%% using LBP %%%%%%%%%%%%%%%%%%%%%%%%% using LBP %%%%%%%%%%%%%%%%%%%%%%%%% using LBP %%%%%%%%%%%%%%%%%%%%%%%%% using LBP %%%%%%%%%%%%%%%%%%%%%%%%% using LBP %%%%%%%%%%%%%%%%%%%%%%%
 options.vdiv = 1;                  % one vertical divition
 options.hdiv = 1;                  % one horizontal divition
 options.semantic = 0;              % classic LBP
 options.samples  = 8;              % number of neighbor samples
 options.mappingtype = 'u2';        % uniform LBP
-options.mappingtype = 'ri';        % rotation-invariant LBP
+%options.mappingtype = 'ri';        % rotation-invariant LBP
 
+clear Y
 for i1 = 1:numel(files)-2
     i = i1+2;
     I = imread([path '/' files(i).name]);
@@ -63,6 +64,29 @@ for i1 = 1:numel(files)-2
 end
 %%
 disp(['using descriptor: ' options.mappingtype ' for LBP and 10 cross-val: ']);
+b(1).name = 'knn';   b(1).options.k = 1;                              % KNN with 5 neighbors
+b(2).name = 'knn';   b(2).options.k = 3;                              % KNN with 7 neighbors
+b(3).name = 'knn';   b(3).options.k = 5;                              % KNN with 9 neighbors
+b(4).name = 'knn';   b(4).options.k = 7;                              % KNN with 9 neighbors
+b(5).name = 'knn';   b(5).options.k = 9;                              % KNN with 9 neighbors
+op.strat=1; op.b = b; op.v = 10; op.show = 1; op.c = 0.95;        	  % 10 groups cross-validation
+[p,ci] = Bev_crossval(Y,dall,op);                                        % cross valitadion
+
+%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%% using CLBP %%%%%%%%%%%%%%%%%%%%%%%%
+map = 'u2';
+mapping=getmapping(8,map); 
+
+clear Y
+for i1 = 1:numel(files)-2
+    i = i1+2;
+    I = imread([path '/' files(i).name]);
+    %BSIF
+    [I,~]=clbp(I,1,8,mapping,'h'); %clbp histogram in (8,1) neighborhood
+    
+    Y(i1,:) = I(:);
+end
+%%
+disp(['using descriptor: ' map ' for CLBP and 10 cross-val: ']);
 b(1).name = 'knn';   b(1).options.k = 1;                              % KNN with 5 neighbors
 b(2).name = 'knn';   b(2).options.k = 3;                              % KNN with 7 neighbors
 b(3).name = 'knn';   b(3).options.k = 5;                              % KNN with 9 neighbors

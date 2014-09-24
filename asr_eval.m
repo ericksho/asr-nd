@@ -13,7 +13,7 @@ if and(p<1,show>2)
     JJ = [];
     for i=1:length(ii)
         I = [];
-        I = asr_imgload(f,it(ii(i)),options.bsif);
+        I = asr_imgload(f,it(ii(i)),options);
         [N,M] = size(I);
         %if options.blur~=0
         %    I = asr_blur(I,options.blur);
@@ -27,7 +27,7 @@ if and(p<1,show>2)
             end
         else
             for j=1:options.n
-                I = [I asr_imgload(f,jj(j),options.bsif)];
+                I = [I asr_imgload(f,jj(j),options)];
             end
         end
         JJ = [JJ;I];

@@ -56,7 +56,7 @@ opint.hdiv        = 6;           % one horizontal   divition
 
 
 
-I           = asr_imgload(f,1,options.bsif);
+I           = asr_imgload(f,1,options);
 [N,M] = size(I);
 
 nn = fix(N/opint.vdiv);
@@ -78,7 +78,7 @@ for i=1:ntrain
     if op.show>1
         ft          = Bio_statusbar(i/N,ft);
     end
-    I           = asr_imgload(f,itrain(i),options.bsif);
+    I           = asr_imgload(f,itrain(i),options);
     if op.triggs == 1
         I = tantriggs(I);
     end
@@ -95,7 +95,7 @@ for i=1:length(itest)
     if op.show>1
         ft          = Bio_statusbar((i+ntrain)/N,ft);
     end
-    I           = asr_imgload(f,itest(i),options.bsif);
+    I           = asr_imgload(f,itest(i),options);
     if op.triggs == 1
         I = tantriggs(I);
     end
