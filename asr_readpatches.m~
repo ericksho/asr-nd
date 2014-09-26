@@ -42,15 +42,20 @@ switch feat
        for i=1:n
            Y(i,:) = Bfx_lbpi(opt.Ilbp(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],options);
        end
-   case 'bsif'        
-       op = options.bsif;
+   case 'bsif'
+       % m     = size(U,2);
+       options.vdiv = 1;                      % one vertical divition
+       options.hdiv = 1;                      % one horizontal divition
+       options.samples  = 8;                  % number of neighbor samples
+       options.mappingtype = 'u2';            % uniform
+       options.show        = 0;
+       [X,~,opt] = Bfx_lbp(I,[],options);     % LBP features
+       options.maxD = size(X,2);
+       Y = zeros(n,options.maxD);
        a = options.a;
        b = options.b;
-       Y=[];
-       
        for i=1:n
-           Y(i,:) = Bfx_bsif(I(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],options);
+           Y(i,:) = Bfx_clbp(opt.Ilbp(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],options);
        end
-       
 end
 % ez = m;

@@ -1,4 +1,3 @@
-options.NV=350;
 bsif.n = 11;
 bsif.b = 10;
 bsif.use = false;

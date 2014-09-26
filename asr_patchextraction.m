@@ -49,7 +49,7 @@ z = zeros(N*m,options.ez);
 x = zeros(N*m,2);
 for i=1:N
     ip = indices(i,m);
-    I0 = asr_imgload(f,ix(i),options);
+    I0 = asr_imgload(f,ix(i),options);%%%
     I  = I0;
     
     if dblur>0
@@ -129,6 +129,9 @@ for i=1:N
             im        = randi(length(ii),m,1);
             ii        = ii(im)-round(border+a/2);
             jj        = jj(im)-round(border+b/2);
+        case 4 %not done, but place here a distribution for upper patches on iris
+            ii        = border+randi(h-a+1-2*border,m,1);
+            jj        = border+randi(w-b+1-2*border,m,1);
     end
     
     z(ip,:)         = asr_readpatches(I,ii,jj,U,options);

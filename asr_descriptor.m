@@ -25,6 +25,8 @@ switch method
 
     case 4
         p.d = [z alpha*x];
+    case 5
+        p.d = [Bft_uninorm(z) alpha*x];
     otherwise
         error('Method %d does not exist in asr_descriptor.\n',method);
 end
