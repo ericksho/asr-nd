@@ -43,6 +43,10 @@ switch op.feat
         op.a   = op.w;                               % patch's heigh
         op.b   = op.w;                               % patch's width
         op.ez  = 59;                                 % descriptor's size
+    case 'bsif'
+        op.a   = op.w;
+        op.b   = op.w;
+        op.ez  = op.a*op.b/(op.patchsub)^2;          % number of pixels %%%%revisar despues por h, im, nh%%%
 end
 op.ez0         = 1;                                  % 1 includes descriptor and location, ez+1 includes location only
 

@@ -47,10 +47,22 @@ switch feat
        a = options.a;
        b = options.b;
        Y=[];
-       
-       for i=1:n
-           Y(i,:) = Bfx_bsif(I(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],options);
-       end
-       
+       switch op.mode
+           case 'im'
+               for i=1:n
+                   patch = Bfx_bsif(I(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],op);  
+                   Y(i,:) = patch(:);
+               end
+           case 'h'
+               for i=1:n
+                   patch = Bfx_bsif(I(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],op);  
+                   Y(i,:) = patch;
+               end
+           case 'nh'
+               for i=1:n
+                   patch = Bfx_bsif(I(ii(i):ii(i)+a-1,jj(i):jj(i)+b-1),[],op);  
+                   Y(i,:) = patch;
+               end
+       end       
 end
 % ez = m;
