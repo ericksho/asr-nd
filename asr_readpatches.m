@@ -19,7 +19,7 @@ end
 switch feat
     case 'gray'
         s     = options.patchsub;
-        zz    = false(options.w,options.w);
+        zz    = false(options.a,options.b);
         zz(1:s:end,1:s:end) = true;
         ii    = zz(:);
         m     = sum(ii);

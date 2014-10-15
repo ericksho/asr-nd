@@ -19,6 +19,19 @@ options.sel      = 1;
 ix0 = ix;
 
 switch ix
+    case 'len'
+        f.path           = [options.local_data '/iris_' ix '/'];
+        f.extension     = 'ppm';
+        f.imgmax        = 750;
+        f.resize        = [20 240];
+        f.digits        = 3;
+        f.classDigits   = 1;
+        f.prefix         = 'len_';
+        options.smin    = 100;
+        options.border  = 10;
+        options.triggs  = 0;                                 % enhancement after Tan & Triggs
+        options.smin    = 90;                                % threshold for sharpness selection
+        
     case 'rr'
         f.extension     = 'bmp';
         f.imgmax        = 114;

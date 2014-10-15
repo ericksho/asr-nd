@@ -1,14 +1,17 @@
 function I = asr_imgload(f,i,options)
 
-if isfield('q','options')
+if isfield(options,'q')
     q = options.q;
 else
     q = 0;
 end
 
-bsif = options.bsif;
-
-sf  = [f.path f.prefix num2fixstr(f.ti(i),3) '_' num2fixstr(f.tf(i),f.digits) '.' f.extension ];
+% bsif = options.bsif;
+if isfield(f, 'classDigits')
+    sf  = [f.path f.prefix num2fixstr(f.ti(i),f.classDigits) '_' num2fixstr(f.tf(i),f.digits) '.' f.extension ];
+else
+    sf  = [f.path f.prefix num2fixstr(f.ti(i),3) '_' num2fixstr(f.tf(i),f.digits) '.' f.extension ];
+end
 
 I   = double(imread(sf));
 
@@ -49,8 +52,8 @@ if q>0 % pre-processing
     end
 end
 
-if bsif.use == true
-    I = asr_bsif(I,bsif.n, bsif.b);
-    %figure(10)
-    %imshow(I,[]);
-end
+% if bsif.use == true
+%     I = asr_bsif(I,bsif.n, bsif.b);
+%     %figure(10)
+%     %imshow(I,[]);
+% end

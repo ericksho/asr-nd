@@ -21,7 +21,9 @@ end
 
 N    = length(nimg); % number of available images in database
 
-sj     = randperm(N,N);
+%%sj     = randperm(N,N); %%%bug??
+
+sj     = randperm(k,N);
 
 i     = 0;
 j     = 0;

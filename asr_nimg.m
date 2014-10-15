@@ -8,12 +8,17 @@ nimg = zeros(1000,1);
 y    = cat(1,x.name);
 z    = y(:,1:n);
 st   = ' ';
+sc = ' ' ;
 sub  = 0;
+img = 0;
 for i=1:size(z,1);
     if compare(st,z(i,:))~=0,
         sub = sub+1;
         st=z(i,:);
-        img = 0;
+        if img == 0 || st(end-d) ~= sc
+            sc = st(end-d);
+            img = 0;
+        end
     end;
     img = img+1;
     nimg(sub) = img;

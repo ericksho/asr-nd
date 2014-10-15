@@ -8,7 +8,7 @@
 
 function opdef = asr_defoptions()
 
-opdef.dbase        = {'orl','yale','cas','rr','ar','ar+','lfwf','multiPIE','bxgrid_01','bxgrid_02','bxgrid_03'};
+opdef.dbase        = {'orl','yale','cas','rr','ar','ar+','lfwf','multiPIE','bxgrid_01','bxgrid_02','bxgrid_03', 'len'};
 opdef.pbase        = {'asr_main','int_main','src_main','tpt_main','lbp_main'};
 opdef.nd           = length(opdef.dbase);
 opdef.local_data  = '/Users/esvecpar/Documents/datasets';

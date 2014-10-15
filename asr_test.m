@@ -22,13 +22,12 @@ for w = 3:2:17
                     bsif.mode  = 'im';              % return image represetation
 
 
-                    options.feat = 'bsif';
+                    options.feat = 'gray';
                     options.bsif = bsif;
 
                     
                     options.k            = 2;      % number of subjects
                     options.n            = 20;      % number of images per subject (training = n-1, testing = 1)
-                    options.dbase        = 'GFI_database';
                      
                     options.show         = 0;       % display results: 0 Nathing, 1 Messages, 2 Bars, 3 Images
                     options.Q            = 32;      % number of parent clusters
@@ -49,12 +48,13 @@ for w = 3:2:17
 
                     %%%%%%%%%
 
-                    p = asr_experiments(1,1,2,options);
+                    p = asr_experiments(12,1,2,options);
                     disp([p i j k l]);
 
                     T(count,:) = [p i j k l]; %1 3 1 3 
                     count = count +1;
                 catch
+                    disp('configuration failed')
                 end
             end
         end
