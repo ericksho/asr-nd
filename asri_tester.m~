@@ -80,7 +80,7 @@ for kmeans_k = 10:10%10:10:30
                         %% separacion test de training
                         [Xt,dt,X,d] = Bds_stratify(Y,dy,s);
                         
-                        [Xt,dt] = zigzagset(Xt,dt);
+                        
 
                         %% train
                         [asri_trained] = asri_train(X,d, options);

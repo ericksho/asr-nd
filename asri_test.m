@@ -58,7 +58,7 @@ for i = 1:N
 
             Dc = knn_op.X(index,:);
             catch
-                disp('failed')
+                disp('failed at construct dictionary from cluster')
             end
             D = [D' Dc']';
             dD = [dD' ones(1,size(Dc,1))*c]';
