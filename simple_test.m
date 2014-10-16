@@ -5,7 +5,7 @@ options.bsif_bits = 11;
 
 options.a = 10;     %ancho patch
 options.b = 32;     %alto patch
-options.m = 100;    %n de patches
+options.m = 400;    %n de patches
 
 %% lectura de db
 path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
@@ -25,6 +25,9 @@ for i = 1:N
                 I(x,y) = 0;
             end
         end
+    end
+    if(sum(isnan(I(:))) > 0)
+        pause
     end
     Y(i,:) = I(:);
 end
@@ -94,7 +97,7 @@ for i = 1:N
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
-            if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
+            if sum(zp==0)/numel(zp) < options.nan_threshold && sum(isnan(zp)) == 0 %porcentaje de zeros aceptados para agregar un patch
                p = reshape(zp,options.a,options.b);
                z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh'); 
                dz2(j) = 1;
@@ -161,7 +164,7 @@ for i = 1:N
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
-            if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
+            if sum(zp==0)/numel(zp) < options.nan_threshold  && sum(isnan(zp)) == 0 %porcentaje de zeros aceptados para agregar un patch
                 p = reshape(zp,options.a,options.b);
                 z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh');
                 dz2(j) = 1;

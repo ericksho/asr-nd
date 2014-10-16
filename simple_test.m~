@@ -26,9 +26,16 @@ for i = 1:N
             end
         end
     end
+    if(sum(isnan(I(:))) > 0)
+        pause
+    end
     Y(i,:) = I(:);
 end
-Yv = Y(N*0.8
+Yv = Y(N*0.8+1:N,:);
+dv = dy(N*0.8+1:N);
+
+Ycv = Y(1:N*0.8,:);
+dcv = dy(1:N*0.8);
 
 %% opciones
 
@@ -60,7 +67,7 @@ options.nan_threshold = 0.1;
 
 s = 0.1; %testing percentage
 %% separacion test de training
-[Xt,dt,X,d] = Bds_stratify(Y,dy,s);
+[Xt,dt,X,d] = Bds_stratify(Ycv,dcv,s);
 
 %% train
 %% por cada imagen extraemos los patches
@@ -92,7 +99,16 @@ for i = 1:N
             zp = z(j,:);
             if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
                p = reshape(zp,options.a,options.b);
+               if sum(isnan(p(:)))
+                   disp('1')
+                   pause
+               end
+               pause(0.2);
                z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh'); 
+               if sum(isnan(z2(j,:)))
+                   disp('2')
+                   pause
+               end
                dz2(j) = 1;
             end
         end
