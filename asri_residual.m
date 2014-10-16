@@ -16,7 +16,7 @@ end
 R = zeros(k,1);
 Ln1_x = zeros(k,1);
 for i = 1:k
-    ii = dD == i;
+    ii = dD ~= i;
     %s(i)  = sum(abs(xt(:,ii)));
     %Rk    = (patch'-D(:,ii)*xt(:,ii)')';         % residual^2
     %ek(i) = sum(Rk.*Rk,2);

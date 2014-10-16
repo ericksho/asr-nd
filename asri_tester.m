@@ -7,7 +7,7 @@ N = numel(files);
 
 dy = [ones(1,N/2) ones(1,N/2)*2]'; %1 hombres, 2 mujeres
 
-for i = 1:numel(files)
+for i = 1:N
     Irgb = imread([path '/' files(i).name]);
     I = rgb2gray(Irgb);
     [ix, iy,~] = size(Irgb);
@@ -20,6 +20,13 @@ for i = 1:numel(files)
     end
     Y(i,:) = I(:);
 end
+
+Yv = Y(N*0.8+1:N,:);
+dv = dy(N*0.8+1:N);
+
+Ycv = Y(1:N*0.8,:);
+dcv = dy(1:N*0.8);
+
 s = 0.9; %testing percentage
 count =1;
 
@@ -88,7 +95,7 @@ for kmeans_k = 10:10%10:10:30
                         s=0.1;
 
                         %% separacion test de training
-                        [Xt,dt,X,d] = Bds_stratify(Y,dy,s);
+                        [Xt,dt,X,d] = Bds_stratify(Ycv,dcv,s);
                         
                         [Xt,dt] = zigzagset(Xt,dt);
 
