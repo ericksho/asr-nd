@@ -28,7 +28,11 @@ for i = 1:N
     end
     Y(i,:) = I(:);
 end
-count =1;
+Yv = Y(N*0.8+1:N,:);
+dv = dy(N*0.8+1:N);
+
+Ycv = Y(1:N*0.8,:);
+dcv = dy(1:N*0.8);
 
 %% opciones
 
@@ -39,7 +43,7 @@ options.uninorm = 1;    %normalization
 options.show = 1;
 options.alpha = 0.5;
 
-knn_options.k = 10;
+knn_options.k = 1;
 options.knn_options = knn_options;     %nearest neigbors
 
 options.h = 20;     %ancho de la imagen
@@ -60,7 +64,7 @@ options.nan_threshold = 0.1;
 
 s = 0.1; %testing percentage
 %% separacion test de training
-[Xt,dt,X,d] = Bds_stratify(Y,dy,s);
+[Xt,dt,X,d] = Bds_stratify(Ycv,dcv,s);
 
 %% train
 %% por cada imagen extraemos los patches
@@ -130,7 +134,7 @@ disp('knn trained');
 %% test
 
 ds = zeros(size(Xt,1),1);
-ds2 = ds; 
+ds2 = zeros(size(Xt,1),options.knn_op.k);
 N = size(Xt,1);
 V = zeros(N,2);
 V2 = zeros(N,2);
@@ -170,9 +174,20 @@ for i = 1:N
     
     patches = asri_descriptor(z,x,options);
     
-    v = Bcl_knn(patches,options.knn_op);
-    ds(i) = (mean(v) > 1.5) + 1;
-    ds2(i) = mode(v);
+    %v = Bcl_knn(patches,options.knn_op);
+    
+    [idx,dist] = vl_kdtreequery(options.knn_op.kdtree,options.knn_op.X',patches','NumNeighbors',options.knn_op.k);
+    dd = options.knn_op.d(idx);
+    v = mode(dd)';
+    
+    pv = zeros(size(v));
+    
+    for c = 1:size(v)
+        pv(c) = sum(dd(:,c)==v(c));
+    end
+    
+    ds(i) = mode(v);
+    %ds2(i,:) = pv;
 %     
 %     
 %     %% por cada patch
@@ -196,9 +211,9 @@ for i = 1:N
 %     ds2(i) = idx2;
     
     p = Bev_performance(ds(1:i),dt(1:i)); % performance on test data
-    p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
+    %p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
     T(i) = toc;
-    disp([i p p2 T(i)])
+    disp([i p T(i)])
 end
         
 if(options.show)
@@ -207,5 +222,5 @@ end
 
 %% evaluar
 p = Bev_performance(ds,dt) % performance on test data
-p2 = Bev_performance(ds2,dt) % performance on test data
+%p2 = Bev_performance(ds2,dt) % performance on test data
 mean(T)

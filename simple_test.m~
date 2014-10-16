@@ -1,5 +1,11 @@
 options.feat = 'gray';  %tipo descriptor
 options.use_bsif = true;
+options.bsif_w = 5;
+options.bsif_bits = 11;
+
+options.a = 10;     %ancho patch
+options.b = 32;     %alto patch
+options.m = 100;    %n de patches
 
 %% lectura de db
 path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
@@ -22,12 +28,9 @@ for i = 1:N
     end
     Y(i,:) = I(:);
 end
-count =1;
+Yv = Y(N*0.8
 
 %% opciones
-options.a = 16;     %ancho patch
-options.b = 16;     %alto patch
-options.m = 100;    %n de patches
 
 options.saliency = 0;   %distribucion de la extraccion de patches
 options.border = 0;     %fijar bordes para no extraer parches
@@ -36,7 +39,8 @@ options.uninorm = 1;    %normalization
 options.show = 1;
 options.alpha = 0.5;
 
-options.knn_k = 10;     %nearest neigbors
+knn_options.k = 1;
+options.knn_options = knn_options;     %nearest neigbors
 
 options.h = 20;     %ancho de la imagen
 options.w = 240;    %alto de la imagen
@@ -67,8 +71,10 @@ end
 N = size(X,1);
 if options.use_bsif
     Xpatches = zeros(N*options.m,2048);
+    z2 = zeros(options.m,2048);
 else
     Xpatches = zeros(N*options.m,options.a*options.b);
+    z2 = zeros(options.m,2048);
 end
 dpatches = zeros(N*options.m,1);
 
@@ -79,16 +85,20 @@ for i = 1:N
     end
     I = reshape(X(i,:),options.h,options.w);
     [z, x] = asri_getPatches(I,options);
+    dz2 = zeros(options.m,1);
     
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
             if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
                p = reshape(zp,options.a,options.b);
-                z2(j,:) = asr_bsif(p,15,11,'nh'); 
+               z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh'); 
+               dz2(j) = 1;
             end
         end
-        z = z2; 
+        idx = find(dz2==1);
+        z = z2(idx,:);
+        x = x(idx,:);
     end
     
     patches = asri_descriptor(z,x,options);
@@ -98,13 +108,17 @@ for i = 1:N
     count = count + size(patches,1);
 end
 
+Xpatches = Xpatches(1:count-1,:);
+dpatches = dpatches(1:count-1);
+
 if(options.show)
     close(bar);
 end
 
 %% entrenamos un knn
 
-options.knn_op = Bcl_knn(Xpatches,dpatches,options.knn_k);
+options.knn_op = Bcl_knn(Xpatches,dpatches,options.knn_options);
+disp('knn trained');
 
 %% buscamos un diccionario disjunto
 % D1 = Xpatches(find(dpatches==1),:);
@@ -116,7 +130,7 @@ options.knn_op = Bcl_knn(Xpatches,dpatches,options.knn_k);
 %% test
 
 ds = zeros(size(Xt,1),1);
-ds2 = ds; 
+ds2 = zeros(size(Xt,1),options.knn_op.k);
 N = size(Xt,1);
 V = zeros(N,2);
 V2 = zeros(N,2);
@@ -128,36 +142,53 @@ end
 
 for i = 1:N
     tic 
+    
+    if(options.show)
+        waitbar(i/N,bar,['Testing image: ' num2str(i)]);
+    end
+
     I = reshape(Xt(i,:), options.h, options.w);
     v = zeros(options.n_class,1);
     v2 = v;
     
     [z, x] = asri_getPatches(I,options);
+    dz2 = zeros(options.m,1);
     
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
             if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
                 p = reshape(zp,options.a,options.b);
-                z2(j,:) = asr_bsif(p,15,11,'nh');
+                z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh');
+                dz2(j) = 1;
             end
         end
-        z = z2;
+        idx = find(dz2==1);
+        z = z2(idx,:);
+        x = x(idx,:);
     end
     
     patches = asri_descriptor(z,x,options);
     
-    v = Bcl_knn(patches,options.knn_op);
-    ds(i) = mean(v);
-    ds2(i) = mode(v);
+    %v = Bcl_knn(patches,options.knn_op);
+    
+    [idx,dist] = vl_kdtreequery(options.knn_op.kdtree,options.knn_op.X',patches','NumNeighbors',options.knn_op.k);
+    dd = options.knn_op.d(idx);
+    v = mode(dd)';
+    
+    pv = zeros(size(v));
+    
+    for c = 1:size(v)
+        pv(c) = sum(dd(:,c)==v(c));
+    end
+    
+    ds(i) = mode(v);
+    %ds2(i,:) = pv;
 %     
 %     
 %     %% por cada patch
 %     for p = 1:size(patches,1)
 %         
-%         if(options.show)
-%             waitbar(i/N,bar,['Testing image: ' num2str(i) ' processing patch : ' num2str(p)]);
-%         end
 %         patch = patches(p,:);
 %         
 %         v(idx) = v(idx) + sci;
@@ -176,9 +207,9 @@ for i = 1:N
 %     ds2(i) = idx2;
     
     p = Bev_performance(ds(1:i),dt(1:i)); % performance on test data
-    p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
+    %p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
     T(i) = toc;
-    disp([i p p2 T(i)])
+    disp([i p T(i)])
 end
         
 if(options.show)
@@ -187,5 +218,5 @@ end
 
 %% evaluar
 p = Bev_performance(ds,dt) % performance on test data
-p2 = Bev_performance(ds2,dt) % performance on test data
+%p2 = Bev_performance(ds2,dt) % performance on test data
 mean(T)
