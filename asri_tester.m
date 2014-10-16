@@ -40,12 +40,11 @@ mex = 2;
 
 %%
 
-for kmeans_k = 10:10%10:10:30
-    for knn_k = 30:30%20:10:40
-        for m = 400:400%100:100:500
-            for a = 5:5:25
-                for b = 10:5:25
-                    for mex = 2:2
+for kmeans_k = 10:10:30
+    for knn_k = 20:10:40
+        for m = 100:100:500
+            for a = 5:5:20
+                for b = 10:5:50
 
                         %% opciones
                         options.nan_threshold = 0.1;
@@ -106,7 +105,7 @@ for kmeans_k = 10:10%10:10:30
                         [ds] = asri_test(Xt, asri_trained, options);
 
                         %% evaluar
-                        p = Bev_performance(ds,dt) % performance on test data
+                        p = Bev_performance(ds,dt') % performance on test data
                         
                         P(count,:) = [p kmeans_k knn_k m a b mex];
                         DS(count,:) = ds;
@@ -114,8 +113,7 @@ for kmeans_k = 10:10%10:10:30
                         save(['kmeans_k' num2str(kmeans_k) 'knn_k' num2str(knn_k) 'm' num2str(m) 'a' num2str(a) 'b' num2str(b) 'mex' options.mex '.mat'], 'asri_trained', 'ds', 'Xt','dt','X','d','options')
                         
                         %para ahorrar memoria
-                        clearvars -except P kmeans_k knn_k m a b mex Y dy s count
-                    end
+                        clearvars -except P kmeans_k knn_k m a b mex Y dy s count Ycv dcv
                 end
             end
         end
