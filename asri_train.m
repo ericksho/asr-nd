@@ -1,13 +1,15 @@
 %% train
 function [asri_trained] = asri_train(X,d, options)
 %% por cada imagen extraemos los patches
-Xpatches = [];
-dpatches = [];
-
 if(options.show)
     bar = waitbar(0,'Train patches extraction');
 end
+
 N = size(X,1);
+Xpatches = zeros(N*options.m,options.a*options.b+2);
+dpatches = zeros(N*options.m,1);
+
+count = 1;
 for i = 1:N
     if(options.show)
         waitbar(i/N,bar,['Train patches extraction...image: ' num2str(i)]);
@@ -27,14 +29,19 @@ for i = 1:N
     
     patches = asri_descriptor(z,x,options);
     
-    Xpatches = [Xpatches' patches']';
-    dpatches = [dpatches' ones(1,size(patches,1))*d(i)]';
+    Xpatches(count:count+size(patches,1)-1,:) = patches;
+    dpatches(count:count+size(patches,1)-1) = ones(size(patches,1),1)*d(i);
+    count = count + size(patches,1);
 end
+
+Xpatches = Xpatches(1:count-1,:);
+dpatches = dpatches(1:count-1);
 
 if(options.show)
     close(bar);
 end
 %load('patches.mat')
+
 %% por cada clase
 N = numel(unique(d));
 
@@ -48,8 +55,8 @@ end
 
 for i = 1:N
     %% cluster por kmeans
-    
-    [dc, C] = Bct_kmeans(Xpatches,k);
+    Xpclass = Xpatches(find(dpatches==i),:);
+    [dc, C] = Bct_kmeans(Xpclass,k);
     knn = [];
     for c = 1:k
         %% por cada cluster entrenamos un knn
@@ -58,7 +65,7 @@ for i = 1:N
         end
         
         idx = find(dc==c);
-        Xc = Xpatches(idx,:);
+        Xc = Xpclass(idx,:);
         
         op = Bcl_knn(Xc,dc(idx),op);      % knn with 10 neighbors
         knn{c} = op;

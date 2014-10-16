@@ -7,7 +7,7 @@ N = numel(files);
 
 dy = [ones(1,N/2) ones(1,N/2)*2]'; %1 hombres, 2 mujeres
 
-for i = 1:numel(files)
+for i = 1:N
     Irgb = imread([path '/' files(i).name]);
     I = rgb2gray(Irgb);
     [ix, iy,~] = size(Irgb);
@@ -20,15 +20,31 @@ for i = 1:numel(files)
     end
     Y(i,:) = I(:);
 end
+
+Yv = Y(N*0.8+1:N,:);
+dv = dy(N*0.8+1:N);
+
+Ycv = Y(1:N*0.8,:);
+dcv = dy(1:N*0.8);
+
 s = 0.9; %testing percentage
 count =1;
 
-for kmeans_k = 10:10%10:10:30
-    for knn_k = 30:30%20:10:40
-        for m = 400:400%100:100:500
-            for a = 10:5:25
-                for b = 5:5:25
-                    for mex = 2:2
+%%
+kmeans_k = 10;
+knn_k = 30;
+m = 400;
+a = 5;
+b = 10;
+mex = 2;
+
+%%
+
+for kmeans_k = 10:10:30
+    for knn_k = 20:10:40
+        for m = 100:100:500
+            for a = 5:5:20
+                for b = 10:5:50
 
                         %% opciones
                         options.nan_threshold = 0.1;
@@ -78,7 +94,9 @@ for kmeans_k = 10:10%10:10:30
                         s=0.1;
 
                         %% separacion test de training
-                        [Xt,dt,X,d] = Bds_stratify(Y,dy,s);
+                        [Xt,dt,X,d] = Bds_stratify(Ycv,dcv,s);
+                        
+                        [Xt,dt] = zigzagset(Xt,dt);
 
                         %% train
                         [asri_trained] = asri_train(X,d, options);
@@ -87,7 +105,7 @@ for kmeans_k = 10:10%10:10:30
                         [ds] = asri_test(Xt, asri_trained, options);
 
                         %% evaluar
-                        p = Bev_performance(ds,dt) % performance on test data
+                        p = Bev_performance(ds,dt') % performance on test data
                         
                         P(count,:) = [p kmeans_k knn_k m a b mex];
                         DS(count,:) = ds;
@@ -95,8 +113,7 @@ for kmeans_k = 10:10%10:10:30
                         save(['kmeans_k' num2str(kmeans_k) 'knn_k' num2str(knn_k) 'm' num2str(m) 'a' num2str(a) 'b' num2str(b) 'mex' options.mex '.mat'], 'asri_trained', 'ds', 'Xt','dt','X','d','options')
                         
                         %para ahorrar memoria
-                        clearvars -except P kmeans_k knn_k m a b mex Y dy s count
-                    end
+                        clearvars -except P kmeans_k knn_k m a b mex Y dy s count Ycv dcv
                 end
             end
         end
