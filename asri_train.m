@@ -55,7 +55,7 @@ end
 
 for i = 1:N
     %% cluster por kmeans
-    Xpclass = Xpatches(find(dpatches==i));
+    Xpclass = Xpatches(find(dpatches==i),:);
     [dc, C] = Bct_kmeans(Xpclass,k);
     knn = [];
     for c = 1:k

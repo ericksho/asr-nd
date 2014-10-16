@@ -60,7 +60,8 @@ x = x+ones(m,1)/2*[a b];
 %x(:,2) = x(:,2)/w;
 
 if options.uninorm == 1 % normalization
-    z         = Bft_uninorm(z);
+    %z         = Bft_uninorm(z); %%% esta entregando muchos nan
+    z         = normr(z); %%% esta entregando muchos nan
     x         = [x(:,1)/a x(:,2)/b];
 end
 

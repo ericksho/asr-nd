@@ -12,7 +12,7 @@ N = size(Xt,1);
 V = zeros(N,2);
 V2 = zeros(N,2);
 for i = 1:N
-    
+    %% extraemos patches
     I = reshape(Xt(i,:), options.h, options.w);
     v = zeros(options.n_class,1);
     v2 = v;
@@ -53,13 +53,13 @@ for i = 1:N
             knn_models = asri_trained{c}.knn;
             
             knn_op = knn_models{closestCluster};
-            try
+%             try
             [index, ~] = vl_kdtreequery(knn_op.kdtree,knn_op.X',patch','NumNeighbors',knn_op.k);
 
             Dc = knn_op.X(index,:);
-            catch
-                disp('failed at construct dictionary from cluster')
-            end
+%             catch
+%                 disp('failed at construct dictionary from cluster')
+%             end
             D = [D' Dc']';
             dD = [dD' ones(1,size(Dc,1))*c]';
         end

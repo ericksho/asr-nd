@@ -23,6 +23,16 @@ end
 s = 0.9; %testing percentage
 count =1;
 
+%%
+kmeans_k = 10;
+knn_k = 30;
+m = 400;
+a = 5;
+b = 10;
+mex = 2;
+
+%%
+
 for kmeans_k = 10:10%10:10:30
     for knn_k = 30:30%20:10:40
         for m = 400:400%100:100:500
