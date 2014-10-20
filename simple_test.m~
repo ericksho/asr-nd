@@ -8,7 +8,8 @@ options.b = 32;     %alto patch
 options.m = 100;    %n de patches
 
 %% lectura de db
-path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
+%path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
+path = '/Users/esvecpar/Documents/datasets/GFI_database/Left_eye_Normalized/';
 
 files = dir2(path);
 N = numel(files);
@@ -46,7 +47,7 @@ options.uninorm = 1;    %normalization
 options.show = 1;
 options.alpha = 0.5;
 
-knn_options.k = 1;
+knn_options.k = 10;
 options.knn_options = knn_options;     %nearest neigbors
 
 options.h = 20;     %ancho de la imagen
@@ -97,18 +98,9 @@ for i = 1:N
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
-            if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
+            if sum(zp==0)/numel(zp) < options.nan_threshold && sum(isnan(zp)) == 0 %porcentaje de zeros aceptados para agregar un patch
                p = reshape(zp,options.a,options.b);
-               if sum(isnan(p(:)))
-                   disp('1')
-                   pause
-               end
-               pause(0.2);
                z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh'); 
-               if sum(isnan(z2(j,:)))
-                   disp('2')
-                   pause
-               end
                dz2(j) = 1;
             end
         end
@@ -173,7 +165,7 @@ for i = 1:N
     if options.use_bsif
         for j=1:size(z,1)
             zp = z(j,:);
-            if sum(zp==0)/numel(zp) < options.nan_threshold %porcentaje de zeros aceptados para agregar un patch
+            if sum(zp==0)/numel(zp) < options.nan_threshold  && sum(isnan(zp)) == 0 %porcentaje de zeros aceptados para agregar un patch
                 p = reshape(zp,options.a,options.b);
                 z2(j,:) = asr_bsif(p,options.bsif_w,options.bsif_bits,'nh');
                 dz2(j) = 1;
@@ -186,46 +178,39 @@ for i = 1:N
     
     patches = asri_descriptor(z,x,options);
     
-    %v = Bcl_knn(patches,options.knn_op);
-    
     [idx,dist] = vl_kdtreequery(options.knn_op.kdtree,options.knn_op.X',patches','NumNeighbors',options.knn_op.k);
     dd = options.knn_op.d(idx);
     v = mode(dd)';
     
-    pv = zeros(size(v));
+    ds2(i) = mode(v);    
     
-    for c = 1:size(v)
-        pv(c) = sum(dd(:,c)==v(c));
+    %% por cada patch
+    v = zeros(2,1);
+    for p = 1:size(patches,1)
+        
+        patch = patches(p,:);
+        
+        pidx = idx(:,p);
+        D = options.knn_op.X(pidx,:);
+        dD = options.knn_op.d(pidx);
+        
+        [R, sci] = asri_residual(D,patch, dD, options);
+        
+        [minR,idxR] = min(R);
+        
+        v(idxR) = v(idxR) + sci;
+        %v2(idxR) = v2(idxR) + 1;
+        
+        %SCI(idx) = sci;
     end
     
-    ds(i) = mode(v);
-    %ds2(i,:) = pv;
-%     
-%     
-%     %% por cada patch
-%     for p = 1:size(patches,1)
-%         
-%         patch = patches(p,:);
-%         
-%         v(idx) = v(idx) + sci;
-%         v2(idx) = v2(idx) + 1;
-%         
-%         %v(idx) = v(idx) + SCIC(idx);
-%         SCI(idx) = sci;
-% 
-%     end
-%     
-%     V(i,:) = v;
-%     V2(i,:) = v2;
-%     [~, idx] = max(v);
-%     [~, idx2] = max(v2);
-%     ds(i) = idx;
-%     ds2(i) = idx2;
+    [~, idxMax] = max(v);
+    ds(i) = idxMax;
     
     p = Bev_performance(ds(1:i),dt(1:i)); % performance on test data
-    %p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
+    p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
     T(i) = toc;
-    disp([i p T(i)])
+    disp([i p p2 T(i)])
 end
         
 if(options.show)

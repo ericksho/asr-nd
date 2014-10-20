@@ -5,6 +5,11 @@ k = options.n_class;
 switch options.mex
     case 'lasso'
         x = full(mexLasso(patch',D',options.sparse_param))';
+        if(sum(x) == 0)
+            disp('wrong!')
+        else
+            disp('yey!!!!!!!')
+        end
     case 'omp'
         x = full(mexOMP(patch',D',options.sparse_param))';
 end

@@ -2,13 +2,16 @@ options.feat = 'gray';  %tipo descriptor
 options.use_bsif = true;
 options.bsif_w = 5;
 options.bsif_bits = 11;
+options.MaxComparisons = 30;
 
 options.a = 10;     %ancho patch
 options.b = 32;     %alto patch
-options.m = 400;    %n de patches
+options.m = 200;    %n de patches
+options.m2 = 600;    %n de patches
 
 %% lectura de db
-path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
+%path = '/Users/ericksho/Documents/datasets/Left_eye_Normalized/';
+path = '/Users/esvecpar/Documents/datasets/GFI_database/Left_eye_Normalized/';
 
 files = dir2(path);
 N = numel(files);
@@ -134,7 +137,9 @@ disp('knn trained');
 %%hacer algo aqui para reducir el diccionario de manera inteligente
 
 % Xpatches = [D1' D2'];
+
 %% test
+options.m = options.m2;
 
 ds = zeros(size(Xt,1),1);
 ds2 = zeros(size(Xt,1),options.knn_op.k);
@@ -179,7 +184,7 @@ for i = 1:N
     
     %v = Bcl_knn(patches,options.knn_op);
     
-    [idx,dist] = vl_kdtreequery(options.knn_op.kdtree,options.knn_op.X',patches','NumNeighbors',options.knn_op.k);
+    [idx,dist] = vl_kdtreequery(options.knn_op.kdtree,options.knn_op.X',patches','NumNeighbors',options.knn_op.k,'MaxComparisons', options.MaxComparisons);
     dd = options.knn_op.d(idx);
     v = mode(dd)';
     
@@ -216,7 +221,7 @@ for i = 1:N
     p = Bev_performance(ds(1:i),dt(1:i)); % performance on test data
     %p2 = Bev_performance(ds2(1:i),dt(1:i)); % performance on test data
     T(i) = toc;
-    disp([i p T(i)])
+    %disp([i p T(i)])
 end
         
 if(options.show)
@@ -224,6 +229,7 @@ if(options.show)
 end
 
 %% evaluar
-p = Bev_performance(ds,dt) % performance on test data
+p = Bev_performance(ds,dt); % performance on test data
 %p2 = Bev_performance(ds2,dt) % performance on test data
-mean(T)
+t=mean(T);
+disp([p t])
