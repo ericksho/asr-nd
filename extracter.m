@@ -23,6 +23,7 @@ for eye = 1:2
                     disp(['Features from ' eyet ' eye with w: ' num2str(w) ' and bits: ' num2str(bits) ' and extracting: ' mode])
                     eval(['Y_left_bsif_' num2str(w) 'x' num2str(w) '_' num2str(bits) '= featuresExtractor(w,bits,mode,path);']);
                     save('features_cropped_left.mat',['Y_left_bsif_' num2str(w) 'x' num2str(w) '_' num2str(bits)],'-append');
+                    eval(['clear Y_left_bsif_' num2str(w) 'x' num2str(w) '_' num2str(bits) ';']);
                 catch
                     disp('failed')
                 end
