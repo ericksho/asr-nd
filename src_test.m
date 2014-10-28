@@ -19,8 +19,9 @@ load(filename, 'ICAtextureFilters');
 for i = 1:numel(files)
     I = rgb2gray(imread([path '/' files(i).name]));
     %BSIF
-    I = bsif(I,ICAtextureFilters,'nh'); %'im' for grayscale, 'h'); for histogram and 'nh'); for normalized histogram
-    
+    I = bsif(I,ICAtextureFilters,'h'); %'im' for grayscale, 'h'); for histogram and 'nh'); for normalized histogram
+    I(1) = 0;
+    I = I/norm(I);
     Y(i,:) = I(:);
 end
 
@@ -113,6 +114,6 @@ for fold = 1:max(indices)
     P(fold) = pi;
 end
 p = mean(P)*100;
-fprintf('> performance SRC 10 cross validation = %7.4f\n',p);
+fprintf('> performance SRC 10 cross validation =       %7.4f\n',p);
 
 end
